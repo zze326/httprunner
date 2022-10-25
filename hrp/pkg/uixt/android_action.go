@@ -53,7 +53,7 @@ func (ud *uiaDriver) MultiPointerGesture(gesture1 *TouchAction, gesture2 *TouchA
 		"actions": actions,
 	}
 	// register(postHandler, new MultiPointerGesture("/wd/hub/session/:sessionId/touch/multi/perform"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "/touch/multi/perform")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "/touch/multi/perform")
 	return
 }
 

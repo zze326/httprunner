@@ -18,7 +18,7 @@ type uiaElement struct {
 
 func (ue uiaElement) Click() (err error) {
 	// register(postHandler, new Click("/wd/hub/session/:sessionId/element/:id/click"))
-	_, err = ue.parent.httpPOST(nil, "/session", ue.parent.sessionId, "/element", ue.id, "/click")
+	_, err = ue.parent.tempHttpPOST(nil, "/session", ue.parent.sessionId, "/element", ue.id, "/click")
 	return
 }
 
@@ -32,7 +32,7 @@ func (ue uiaElement) SendKeys(text string, options ...DataOption) (err error) {
 	// new data options in post data for extra uiautomator configurations
 	d := NewData(data, options...)
 
-	_, err = ue.parent.httpPOST(d.Data, "/session", ue.parent.sessionId, "/element", ue.id, "/value")
+	_, err = ue.parent.tempHttpPOST(d.Data, "/session", ue.parent.sessionId, "/element", ue.id, "/value")
 	return
 }
 
@@ -181,7 +181,7 @@ func (ue uiaElement) FindVisibleCells() (elements []WebElement, err error) {
 func (ue uiaElement) Rect() (rect Rect, err error) {
 	// register(getHandler, new GetRect("/wd/hub/session/:sessionId/element/:id/rect"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/rect"); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/rect"); err != nil {
 		return Rect{}, err
 	}
 	reply := new(struct{ Value Rect })
@@ -195,7 +195,7 @@ func (ue uiaElement) Rect() (rect Rect, err error) {
 func (ue uiaElement) Location() (point Point, err error) {
 	// register(getHandler, new Location("/wd/hub/session/:sessionId/element/:id/location"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/location"); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/location"); err != nil {
 		return Point{-1, -1}, err
 	}
 	reply := new(struct{ Value Point })
@@ -209,7 +209,7 @@ func (ue uiaElement) Location() (point Point, err error) {
 func (ue uiaElement) Size() (size Size, err error) {
 	// register(getHandler, new GetSize("/wd/hub/session/:sessionId/element/:id/size"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/size"); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/size"); err != nil {
 		return Size{-1, -1}, err
 	}
 	reply := new(struct{ Value Size })
@@ -223,7 +223,7 @@ func (ue uiaElement) Size() (size Size, err error) {
 func (ue uiaElement) Text() (text string, err error) {
 	// register(getHandler, new GetText("/wd/hub/session/:sessionId/element/:id/text"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/text"); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/text"); err != nil {
 		return "", err
 	}
 	reply := new(struct{ Value string })
@@ -267,7 +267,7 @@ func (ue uiaElement) IsAccessibilityContainer() (isAccessibilityContainer bool, 
 func (ue uiaElement) GetAttribute(attr ElementAttribute) (value string, err error) {
 	// register(getHandler, new GetElementAttribute("/wd/hub/session/:sessionId/element/:id/attribute/:name"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/attribute", attr.getAttributeName()); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/attribute", attr.getAttributeName()); err != nil {
 		return "", err
 	}
 	reply := new(struct{ Value string })
@@ -288,7 +288,7 @@ func (ue uiaElement) Screenshot() (raw *bytes.Buffer, err error) {
 	// JSONWP endpoint
 	// register(getHandler, new GetElementScreenshot("/wd/hub/session/:sessionId/screenshot/:id"))
 	var rawResp rawResponse
-	if rawResp, err = ue.parent.httpGET("/session", ue.parent.sessionId, "/element", ue.id, "/screenshot"); err != nil {
+	if rawResp, err = ue.parent.tempHttpGET("/session", ue.parent.sessionId, "/element", ue.id, "/screenshot"); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value string })

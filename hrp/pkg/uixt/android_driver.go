@@ -100,7 +100,7 @@ func (ud *uiaDriver) NewSession(capabilities Capabilities) (sessionInfo SessionI
 	// register(postHandler, new NewSession("/wd/hub/session"))
 	var rawResp rawResponse
 	data := map[string]interface{}{"capabilities": capabilities}
-	if rawResp, err = ud.httpPOST(data, "/session"); err != nil {
+	if rawResp, err = ud.tempHttpPOST(data, "/session"); err != nil {
 		return SessionInfo{SessionId: ""}, err
 	}
 	reply := new(struct{ Value struct{ SessionId string } })
@@ -120,7 +120,7 @@ func (ud *uiaDriver) ActiveSession() (sessionInfo SessionInfo, err error) {
 func (ud *uiaDriver) SessionIDs() (sessionIDs []string, err error) {
 	// register(getHandler, new GetSessions("/wd/hub/sessions"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/sessions"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/sessions"); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value []struct{ SessionId string } })
@@ -138,7 +138,7 @@ func (ud *uiaDriver) SessionIDs() (sessionIDs []string, err error) {
 func (ud *uiaDriver) SessionDetails() (scrollData map[string]interface{}, err error) {
 	// register(getHandler, new GetSessionDetails("/wd/hub/session/:sessionId"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value map[string]interface{} })
@@ -158,7 +158,7 @@ func (ud *uiaDriver) DeleteSession() (err error) {
 func (ud *uiaDriver) Status() (deviceStatus DeviceStatus, err error) {
 	// register(getHandler, new Status("/wd/hub/status"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/status"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/status"); err != nil {
 		return DeviceStatus{Ready: false}, err
 	}
 	reply := new(struct {
@@ -176,7 +176,7 @@ func (ud *uiaDriver) Status() (deviceStatus DeviceStatus, err error) {
 func (ud *uiaDriver) DeviceInfo() (deviceInfo DeviceInfo, err error) {
 	// register(getHandler, new GetDeviceInfo("/wd/hub/session/:sessionId/appium/device/info"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "appium/device/info"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "appium/device/info"); err != nil {
 		return DeviceInfo{}, err
 	}
 	reply := new(struct{ Value struct{ DeviceInfo } })
@@ -195,7 +195,7 @@ func (ud *uiaDriver) Location() (location Location, err error) {
 func (ud *uiaDriver) BatteryInfo() (batteryInfo BatteryInfo, err error) {
 	// register(getHandler, new GetBatteryInfo("/wd/hub/session/:sessionId/appium/device/battery_info"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "appium/device/battery_info"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "appium/device/battery_info"); err != nil {
 		return BatteryInfo{}, err
 	}
 	reply := new(struct{ Value struct{ BatteryInfo } })
@@ -212,7 +212,7 @@ func (ud *uiaDriver) BatteryInfo() (batteryInfo BatteryInfo, err error) {
 func (ud *uiaDriver) WindowSize() (size Size, err error) {
 	// register(getHandler, new GetDeviceSize("/wd/hub/session/:sessionId/window/:windowHandle/size"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "window/:windowHandle/size"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "window/:windowHandle/size"); err != nil {
 		return Size{}, err
 	}
 	reply := new(struct{ Value struct{ Size } })
@@ -235,7 +235,7 @@ func (ud *uiaDriver) Scale() (scale float64, err error) {
 // PressBack simulates a short press on the BACK button.
 func (ud *uiaDriver) PressBack() (err error) {
 	// register(postHandler, new PressBack("/wd/hub/session/:sessionId/back"))
-	_, err = ud.httpPOST(nil, "/session", ud.sessionId, "back")
+	_, err = ud.tempHttpPOST(nil, "/session", ud.sessionId, "back")
 	return
 }
 
@@ -347,14 +347,14 @@ func (ud *uiaDriver) _pressKeyCode(keyCode KeyCode, metaState KeyMeta, flags ...
 	if len(flags) != 0 {
 		data["flags"] = flags[0]
 	}
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "appium/device/press_keycode")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "appium/device/press_keycode")
 	return
 }
 
 func (ud *uiaDriver) AlertText() (text string, err error) {
 	// register(getHandler, new GetAlertText("/wd/hub/session/:sessionId/alert/text"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "alert/text"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "alert/text"); err != nil {
 		return "", err
 	}
 	reply := new(struct{ Value string })
@@ -379,7 +379,7 @@ func (ud *uiaDriver) AlertAccept(label ...string) (err error) {
 		data["buttonLabel"] = label[0]
 	}
 	// register(postHandler, new AcceptAlert("/wd/hub/session/:sessionId/alert/accept"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "alert/accept")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "alert/accept")
 	return
 }
 
@@ -391,7 +391,7 @@ func (ud *uiaDriver) AlertDismiss(label ...string) (err error) {
 		data["buttonLabel"] = label[0]
 	}
 	// register(postHandler, new DismissAlert("/wd/hub/session/:sessionId/alert/dismiss"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "alert/dismiss")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "alert/dismiss")
 	return
 }
 
@@ -496,7 +496,7 @@ func (ud *uiaDriver) TapFloat(x, y float64, options ...DataOption) (err error) {
 	// new data options in post data for extra uiautomator configurations
 	d := NewData(data, options...)
 
-	_, err = ud.httpPOST(d.Data, "/session", ud.sessionId, "appium/tap")
+	_, err = ud.tempHttpPOST(d.Data, "/session", ud.sessionId, "appium/tap")
 	return
 }
 
@@ -525,13 +525,13 @@ func (ud *uiaDriver) TouchAndHoldFloat(x, y float64, second ...float64) (err err
 			"duration": int(second[0] * 1000),
 		},
 	}
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "touch/longclick")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "touch/longclick")
 	return
 }
 
 func (ud *uiaDriver) _drag(data map[string]interface{}) (err error) {
 	// register(postHandler, new Drag("/wd/hub/session/:sessionId/touch/drag"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "touch/drag")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "touch/drag")
 	return
 }
 
@@ -569,7 +569,7 @@ func (ud *uiaDriver) _swipe(startX, startY, endX, endY interface{}, options ...D
 	// new data options in post data for extra uiautomator configurations
 	d := NewData(data, options...)
 
-	_, err = ud.httpPOST(d.Data, "/session", ud.sessionId, "touch/perform")
+	_, err = ud.tempHttpPOST(d.Data, "/session", ud.sessionId, "touch/perform")
 	return
 }
 
@@ -600,7 +600,7 @@ func (ud *uiaDriver) PerformW3CActions(actions *W3CActions) (err error) {
 		"actions": actions,
 	}
 	// register(postHandler, new W3CActions("/wd/hub/session/:sessionId/actions"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "/actions")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "/actions")
 	return
 }
 
@@ -623,7 +623,7 @@ func (ud *uiaDriver) SetPasteboard(contentType PasteboardType, content string) (
 		"content":     base64.StdEncoding.EncodeToString([]byte(content)),
 	}
 	// register(postHandler, new SetClipboard("/wd/hub/session/:sessionId/appium/device/set_clipboard"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "appium/device/set_clipboard")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "appium/device/set_clipboard")
 	return
 }
 
@@ -636,7 +636,7 @@ func (ud *uiaDriver) GetPasteboard(contentType PasteboardType) (raw *bytes.Buffe
 		"contentType": contentType[0],
 	}
 	var rawResp rawResponse
-	if rawResp, err = ud.httpPOST(data, "/session", ud.sessionId, "appium/device/get_clipboard"); err != nil {
+	if rawResp, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "appium/device/get_clipboard"); err != nil {
 		return
 	}
 	reply := new(struct{ Value string })
@@ -661,7 +661,7 @@ func (ud *uiaDriver) SendKeys(text string, options ...DataOption) (err error) {
 	// new data options in post data for extra uiautomator configurations
 	d := NewData(data, options...)
 
-	_, err = ud.httpPOST(d.Data, "/session", ud.sessionId, "keys")
+	_, err = ud.tempHttpPOST(d.Data, "/session", ud.sessionId, "keys")
 	return
 }
 
@@ -705,7 +705,7 @@ func (ud *uiaDriver) IOHIDEvent(pageID EventPageID, usageID EventUsageID, durati
 
 func (ud *uiaDriver) ExpectNotification(notifyName string, notifyType NotificationType, second ...int) (err error) {
 	// register(postHandler, new OpenNotification("/wd/hub/session/:sessionId/appium/device/open_notifications"))
-	_, err = ud.httpPOST(nil, "/session", ud.sessionId, "appium/device/open_notifications")
+	_, err = ud.tempHttpPOST(nil, "/session", ud.sessionId, "appium/device/open_notifications")
 	return
 }
 
@@ -722,7 +722,7 @@ func (ud *uiaDriver) SiriOpenUrl(url string) (err error) {
 func (ud *uiaDriver) Orientation() (orientation Orientation, err error) {
 	// register(getHandler, new GetOrientation("/wd/hub/session/:sessionId/orientation"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "orientation"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "orientation"); err != nil {
 		return "", err
 	}
 	reply := new(struct{ Value Orientation })
@@ -742,7 +742,7 @@ func (ud *uiaDriver) SetOrientation(orientation Orientation) (err error) {
 func (ud *uiaDriver) Rotation() (rotation Rotation, err error) {
 	// register(getHandler, new GetRotation("/wd/hub/session/:sessionId/rotation"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "rotation"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "rotation"); err != nil {
 		return Rotation{}, err
 	}
 	reply := new(struct{ Value Rotation })
@@ -774,7 +774,7 @@ func (ud *uiaDriver) _findElements(method, selector string, elementID ...string)
 		data["context"] = elementID[0]
 	}
 	var rawResp rawResponse
-	if rawResp, err = ud.httpPOST(data, "/session", ud.sessionId, "/elements"); err != nil {
+	if rawResp, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "/elements"); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value []map[string]string })
@@ -806,7 +806,7 @@ func (ud *uiaDriver) _findElement(method, selector string, elementID ...string) 
 		data["context"] = elementID[0]
 	}
 	var rawResp rawResponse
-	if rawResp, err = ud.httpPOST(data, "/session", ud.sessionId, "/element"); err != nil {
+	if rawResp, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "/element"); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value map[string]string })
@@ -841,7 +841,7 @@ func (ud *uiaDriver) FindElements(by BySelector) (elements []WebElement, err err
 		"value": value,
 	}
 	var rawResp rawResponse
-	if rawResp, err = ud.httpPOST(data, "/session", ud.sessionId, "/elements"); err != nil {
+	if rawResp, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "/elements"); err != nil {
 		return nil, err
 	}
 	var elementIDs []string
@@ -861,7 +861,7 @@ func (ud *uiaDriver) FindElements(by BySelector) (elements []WebElement, err err
 func (ud *uiaDriver) Screenshot() (raw *bytes.Buffer, err error) {
 	// register(getHandler, new CaptureScreenshot("/wd/hub/session/:sessionId/screenshot"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "screenshot"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "screenshot"); err != nil {
 		return nil, errors.Wrap(code.AndroidScreenShotError,
 			fmt.Sprintf("get UIA screenshot data failed: %v", err))
 	}
@@ -883,7 +883,7 @@ func (ud *uiaDriver) Screenshot() (raw *bytes.Buffer, err error) {
 func (ud *uiaDriver) Source(srcOpt ...SourceOption) (source string, err error) {
 	// register(getHandler, new Source("/wd/hub/session/:sessionId/source"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "source"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "source"); err != nil {
 		return "", err
 	}
 	reply := new(struct{ Value string })
@@ -908,7 +908,7 @@ func (ud *uiaDriver) HealthCheck() (err error) {
 func (ud *uiaDriver) GetAppiumSettings() (settings map[string]interface{}, err error) {
 	// register(getHandler, new GetSettings("/wd/hub/session/:sessionId/appium/settings"))
 	var rawResp rawResponse
-	if rawResp, err = ud.httpGET("/session", ud.sessionId, "appium/settings"); err != nil {
+	if rawResp, err = ud.tempHttpGET("/session", ud.sessionId, "appium/settings"); err != nil {
 		return nil, err
 	}
 	reply := new(struct{ Value map[string]interface{} })
@@ -925,7 +925,7 @@ func (ud *uiaDriver) SetAppiumSettings(settings map[string]interface{}) (ret map
 		"settings": settings,
 	}
 	// register(postHandler, new UpdateSettings("/wd/hub/session/:sessionId/appium/settings"))
-	_, err = ud.httpPOST(data, "/session", ud.sessionId, "appium/settings")
+	_, err = ud.tempHttpPOST(data, "/session", ud.sessionId, "appium/settings")
 	return
 }
 
