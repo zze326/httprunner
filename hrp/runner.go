@@ -76,6 +76,7 @@ type HRPRunner struct {
 	http2Client   *http.Client
 	wsDialer      *websocket.Dialer
 	uiClients     map[string]*uixt.DriverExt // UI automation clients for iOS and Android, key is udid/serial
+	Summary       *Summary
 }
 
 // SetClientTransport configures transport of http client for high concurrency load testing
@@ -264,6 +265,7 @@ func (r *HRPRunner) Run(testcases ...ITestCase) error {
 		}
 	}
 
+	r.Summary = s
 	return runErr
 }
 
